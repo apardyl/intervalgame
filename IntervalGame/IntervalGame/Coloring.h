@@ -12,7 +12,7 @@ public:
 		Coloring & coloring;
 		unsigned key;
 	public:
-		Proxy(Coloring & c, int k);
+		Proxy(Coloring & c, unsigned k);
 		void operator=(const unsigned color) const;
 		operator unsigned const&() const;
 	};

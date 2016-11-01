@@ -1,5 +1,4 @@
 #include "Coloring.h"
-#include <exception>
 #include <stdexcept>
 
 Coloring::Coloring(unsigned long long value) : val(value) {
@@ -17,11 +16,11 @@ Coloring::Proxy Coloring::operator[](const unsigned k) {
 	return Proxy(*this, k);
 }
 
-Coloring::Proxy::Proxy(Coloring & c, int k) : coloring(c), key(k) {
+Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
 }
 
 void Coloring::Proxy::operator=(const unsigned color) const {
-	if(color >= 16) throw std::domain_error("Colors in range 0 to 15");
+	if(color >= 16) throw std::out_of_range("Colors in range 0 to 15");
 	coloring.val = (coloring.val & ~(0x0F << 4 * key)) | (unsigned long long(color) << 4 * key);
 }
 

@@ -146,10 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Coloring.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="IntervalGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Coloring.h" />
+    <ClInclude Include="Graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
