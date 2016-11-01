@@ -1,4 +1,5 @@
 #pragma once
+
 class Graph {
 private:
 	unsigned val;
@@ -21,5 +22,8 @@ public:
 
 	Proxy operator[](const unsigned k);
 	operator unsigned const&() const;
-};
 
+	int size() const;
+	bool isValid() const;
+	void reverse();
+};
