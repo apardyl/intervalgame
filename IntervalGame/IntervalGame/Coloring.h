@@ -14,11 +14,14 @@ public:
 	public:
 		Proxy(Coloring & c, unsigned k);
 		void operator=(const unsigned color) const;
-		operator unsigned const&() const;
+		operator unsigned const() const;
 	};
 
 	friend class Proxy;
 
 	Proxy operator[](const unsigned k);
-	operator unsigned long long const&() const;
+	unsigned long long value() const;
+	void reverse();
+	unsigned normalize();
+	bool isValid();
 };

@@ -21,8 +21,8 @@ public:
 	friend class Proxy;
 
 	Proxy operator[](const unsigned k);
-	operator unsigned const&() const;
 
+	unsigned long long value() const;
 	int size() const;
 	bool isValid() const;
 	void reverse();
