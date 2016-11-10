@@ -3,6 +3,8 @@
 class Coloring {
 private:
 	unsigned long long val;
+	unsigned colorsUsed;
+	bool isNormalized;
 public:
 	Coloring();
 	Coloring(unsigned long long);
@@ -20,8 +22,9 @@ public:
 	friend class Proxy;
 
 	Proxy operator[](const unsigned k);
-	unsigned long long value() const;
+	explicit operator unsigned long long () const;
 	void reverse();
 	unsigned normalize();
 	bool isValid();
+	unsigned colors();
 };

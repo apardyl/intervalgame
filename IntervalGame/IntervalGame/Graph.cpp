@@ -28,7 +28,7 @@ Graph::Proxy Graph::operator[](const unsigned k) {
 	return Proxy(*this, k);
 }
 
-unsigned long long Graph::value() const {
+Graph::operator unsigned () const {
 	return val;
 }
 

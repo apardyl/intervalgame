@@ -22,7 +22,7 @@ public:
 
 	Proxy operator[](const unsigned k);
 
-	unsigned long long value() const;
+	explicit operator unsigned () const;
 	int size() const;
 	bool isValid() const;
 	void reverse();

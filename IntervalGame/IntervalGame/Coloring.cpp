@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 
-Coloring::Coloring(unsigned long long value) : val(value) {
+Coloring::Coloring(unsigned long long value) : val(value), colorsUsed(0), isNormalized(false) {
 }
 
 Coloring::Coloring() : Coloring(0) {
@@ -32,6 +32,7 @@ unsigned Coloring::normalize() {
 		}
 		(*this)[i] = perm[(*this)[i]];
 	}
+	isNormalized = true;
 	return next - 1;
 }
 
@@ -46,13 +47,18 @@ bool Coloring::isValid() {
 	return true;
 }
 
+unsigned Coloring::colors() {
+	if (!isNormalized) colorsUsed = normalize();
+	return colorsUsed;
+}
+
+Coloring::operator unsigned long long() const {
+	return val;
+}
+
 Coloring::Proxy Coloring::operator[](const unsigned k) {
 	if(k >= 16) throw std::out_of_range("No more than 16 elements allowed");
 	return Proxy(*this, k);
-}
-
-unsigned long long Coloring::value() const {
-	return val;
 }
 
 Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
@@ -61,6 +67,7 @@ Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
 void Coloring::Proxy::operator=(const unsigned color) const {
 	if(color >= 16) throw std::out_of_range("Colors in range 0 to 15");
 	coloring.val = (coloring.val & ~(0x0F << 4 * key)) | (unsigned long long(color) << 4 * key);
+	coloring.isNormalized = false;
 }
 
 Coloring::Proxy::operator unsigned const() const {
