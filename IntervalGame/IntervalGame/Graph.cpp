@@ -68,3 +68,19 @@ void Graph::insert(const unsigned position, const bool flag) {
 
 	val = ((val & (~mask)) << 1) | (val & mask) | (unsigned(flag) << position);
 }
+
+unsigned Graph::minColors() {
+	unsigned used = 0;
+	unsigned free = 0;
+	for(unsigned i = 0, j = 0; i<32 && j<popcount(); i++) {
+		if((*this)[i]) {
+			j++;
+			if (free <= 0) used++;
+			else free--;
+		}
+		else {
+			free++;
+		}
+	}
+	return used;
+}

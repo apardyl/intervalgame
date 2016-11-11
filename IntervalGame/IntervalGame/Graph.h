@@ -27,4 +27,5 @@ public:
 	bool isValid() const;
 	void reverse();
 	void insert(const unsigned position, const bool flag);
+	unsigned minColors();
 };

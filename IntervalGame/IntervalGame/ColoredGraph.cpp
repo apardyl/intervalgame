@@ -41,32 +41,33 @@ void ColoredGraph::normailze() {
 }
 
 void ColoredGraph::insert(unsigned position, unsigned color) {
-	std::queue<bool> Q;
+	int q = 1000;
+	int p = 0;
 
-	for(unsigned i = 0, j = 0; i < 32; i++) {
+	for(unsigned i = 0, j = 0; i < 32 && i <= position; i++) {
 		if(i == position) {
 			graph.insert(i, true);
-			Q.push(true);
+			q = p;
 			coloring.insert(j, color);
 			j++;
 			continue;
 		}
 		if(graph[i] == true) {
-			Q.push(false);
+			p++;
 			j++;
 		}
 		else {
-			if(Q.empty() && i > position) return;
-			if(Q.front()) {
+			if(q == 0) {
 				graph.insert(i, false);
 			}
-			Q.pop();
+			q--;
 		}
 	}
 }
 
 std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
-	os << "Graph: " << unsigned(cgraph.graph) << " Coloring: " << long long unsigned(cgraph.coloring) << " Valid: " << cgraph.isValid() << std::endl;
+	os << "Graph: " << unsigned(cgraph.graph) << " Coloring: " << long long unsigned(cgraph.coloring)
+		<< " Valid: " << cgraph.isValid() << " MinColors: " << cgraph.graph.minColors() << std::endl;
 
 	int col = cgraph.coloring.colors();
 	for(int i = 1; i <= col; i++) {
