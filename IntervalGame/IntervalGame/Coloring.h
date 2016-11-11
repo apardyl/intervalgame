@@ -20,6 +20,8 @@ public:
 	friend class Proxy;
 
 	Proxy operator[](const unsigned k);
+	bool operator==(const Coloring& a) const;
+
 	explicit operator unsigned long long() const;
 	void reverse();
 	unsigned normalize();

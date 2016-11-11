@@ -5,7 +5,7 @@
 #include <ostream>
 
 class ColoredGraph {
-public: //TODO: change to private
+private:
 	Graph graph;
 	Coloring coloring;
 public:
@@ -14,5 +14,15 @@ public:
 	void normailze();
 	void insert(unsigned position, unsigned color);
 
+	bool operator==(const ColoredGraph& a) const;
+
 	friend std::ostream& operator<<(std::ostream &, ColoredGraph &);
+	friend std::hash<ColoredGraph>;
 };
+
+namespace std {
+	template <>
+	struct hash<ColoredGraph> {
+		size_t operator()(const ColoredGraph& a) const;
+	};
+}

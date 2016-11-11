@@ -28,11 +28,15 @@ Graph::Proxy Graph::operator[](const unsigned k) {
 	return Proxy(*this, k);
 }
 
+bool Graph::operator==(const Graph & a) const {
+	return val == a.val;
+}
+
 Graph::operator unsigned () const {
 	return val;
 }
 
-int Graph::popcount() const {
+unsigned Graph::popcount() const {
 	return __builtin_popcount(val);
 }
 
@@ -72,7 +76,7 @@ void Graph::insert(const unsigned position, const bool flag) {
 unsigned Graph::minColors() {
 	unsigned used = 0;
 	unsigned free = 0;
-	for(unsigned i = 0, j = 0; i<32 && j<popcount(); i++) {
+	for(unsigned i = 0, j = 0; i<32u && j<popcount(); i++) {
 		if((*this)[i]) {
 			j++;
 			if (free <= 0) used++;

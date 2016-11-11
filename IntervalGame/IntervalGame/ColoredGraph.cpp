@@ -65,6 +65,10 @@ void ColoredGraph::insert(unsigned position, unsigned color) {
 	}
 }
 
+bool ColoredGraph::operator==(const ColoredGraph & a) const {
+	return (graph == a.graph) && (coloring == a.coloring);
+}
+
 std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
 	os << "Graph: " << unsigned(cgraph.graph) << " Coloring: " << long long unsigned(cgraph.coloring)
 		<< " Valid: " << cgraph.isValid() << " MinColors: " << cgraph.graph.minColors() << std::endl;
@@ -92,4 +96,8 @@ std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
 	}
 
 	return os;
+}
+
+size_t std::hash<ColoredGraph>::operator()(const ColoredGraph & a) const {
+	return unsigned long long(a.coloring) + (unsigned long long(unsigned(a.graph)) << 32);
 }

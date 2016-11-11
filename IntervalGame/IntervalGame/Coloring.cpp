@@ -70,6 +70,10 @@ Coloring::Proxy Coloring::operator[](const unsigned k) {
 	return Proxy(*this, k);
 }
 
+bool Coloring::operator==(const Coloring & a) const {
+	return val == a.val;
+}
+
 Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
 }
 

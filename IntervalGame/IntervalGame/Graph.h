@@ -21,9 +21,10 @@ public:
 	friend class Proxy;
 
 	Proxy operator[](const unsigned k);
+	bool operator==(const Graph&) const;
 
 	explicit operator unsigned() const;
-	int popcount() const;
+	unsigned popcount() const;
 	bool isValid() const;
 	void reverse();
 	void insert(const unsigned position, const bool flag);
