@@ -12,7 +12,7 @@ public:
 	ColoredGraph();
 	bool isValid();
 	void normailze();
+	void insert(unsigned position, unsigned color);
 
-	friend std::ostream& operator<<(std::ostream&, ColoredGraph&);
+	friend std::ostream& operator<<(std::ostream &, ColoredGraph &);
 };
-

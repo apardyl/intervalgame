@@ -15,15 +15,16 @@ public:
 	public:
 		Proxy(Graph & c, unsigned k);
 		void operator=(const bool s) const;
-		operator bool const&() const;
+		operator bool const() const;
 	};
 
 	friend class Proxy;
 
 	Proxy operator[](const unsigned k);
 
-	explicit operator unsigned () const;
-	int size() const;
+	explicit operator unsigned() const;
+	int popcount() const;
 	bool isValid() const;
 	void reverse();
+	void insert(const unsigned position, const bool flag);
 };

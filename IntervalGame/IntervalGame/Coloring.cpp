@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 
-Coloring::Coloring(unsigned long long value) : val(value), colorsUsed(0), isNormalized(false) {
+Coloring::Coloring(unsigned long long value) : val(value) {
 }
 
 Coloring::Coloring() : Coloring(0) {
@@ -10,11 +10,11 @@ Coloring::Coloring() : Coloring(0) {
 
 void Coloring::reverse() {
 	int i = 15;
-	for (; i >= 0; i--) {
-		if ((*this)[i] != 0) break;
+	for(; i >= 0; i--) {
+		if((*this)[i] != 0) break;
 	}
 	unsigned tmp;
-	for(int j = 0; j<i;j++, i--) {
+	for(int j = 0; j < i; j++ , i--) {
 		tmp = (*this)[i];
 		(*this)[i] = unsigned((*this)[j]);
 		(*this)[j] = tmp;
@@ -22,34 +22,43 @@ void Coloring::reverse() {
 }
 
 unsigned Coloring::normalize() {
-	unsigned perm[16] = { 0 };
+	unsigned perm[16] = {0};
 	unsigned next = 1;
-	for(int i = 0; i<16;i++) {
-		if ((*this)[i] == 0) break;
-		if (perm[(*this)[i]] == 0) {
+	for(int i = 0; i < 16; i++) {
+		if((*this)[i] == 0) break;
+		if(perm[(*this)[i]] == 0) {
 			perm[(*this)[i]] = next;
 			next++;
 		}
 		(*this)[i] = perm[(*this)[i]];
 	}
-	isNormalized = true;
 	return next - 1;
 }
 
 bool Coloring::isValid() {
 	int i = 0;
-	for(;i<16;i++) {
-		if ((*this)[i] == 0) break;
+	for(; i < 16; i++) {
+		if((*this)[i] == 0) break;
 	}
-	for(;i<16;i++) {
-		if ((*this)[i] != 0) return false;
+	for(; i < 16; i++) {
+		if((*this)[i] != 0) return false;
 	}
 	return true;
 }
 
 unsigned Coloring::colors() {
-	if (!isNormalized) colorsUsed = normalize();
-	return colorsUsed;
+	return normalize();
+}
+
+void Coloring::insert(const unsigned position, const unsigned color) {
+	if(position >= 16) throw std::out_of_range("No more than 16 elements allowed");
+	if(color >= 16) throw std::out_of_range("Colors in range 0 to 15");
+	if((val & (unsigned long long(0x0F) << (4 * 15))) != 0) throw std::out_of_range("Coloring full");
+
+	//a work around for undefined behaviour when shifting left unsigned by its length
+	unsigned long long mask = (position == 0) ? 0 : (~unsigned long long(0)) >> (64 - (position * 4)); 
+
+	val = ((val & (~mask)) << 4) | (val & mask) | (unsigned long long(color) << position * 4);
 }
 
 Coloring::operator unsigned long long() const {
@@ -67,7 +76,6 @@ Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
 void Coloring::Proxy::operator=(const unsigned color) const {
 	if(color >= 16) throw std::out_of_range("Colors in range 0 to 15");
 	coloring.val = (coloring.val & ~(0x0F << 4 * key)) | (unsigned long long(color) << 4 * key);
-	coloring.isNormalized = false;
 }
 
 Coloring::Proxy::operator unsigned const() const {

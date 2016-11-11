@@ -142,9 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Coloring.cpp" />
     <ClCompile Include="ColoredGraph.cpp" />
     <ClCompile Include="Graph.cpp" />
