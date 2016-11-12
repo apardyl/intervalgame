@@ -79,9 +79,9 @@ Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
 
 void Coloring::Proxy::operator=(const unsigned color) const {
 	if(color >= 16) throw std::out_of_range("Colors in range 0 to 15");
-	coloring.val = (coloring.val & ~(0x0F << 4 * key)) | (unsigned long long(color) << 4 * key);
+	coloring.val = (coloring.val & ~(unsigned long long(0x0F) << 4 * key)) | (unsigned long long(color) << 4 * key);
 }
 
 Coloring::Proxy::operator unsigned const() const {
-	return ((coloring.val & (0x0F << 4 * key)) >> 4 * key);
+	return ((coloring.val & (unsigned long long(0x0F) << 4 * key)) >> 4 * key);
 }

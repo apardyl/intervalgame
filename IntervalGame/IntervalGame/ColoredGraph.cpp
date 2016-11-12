@@ -13,6 +13,7 @@ bool ColoredGraph::isValid() {
 
 	for(int i = 0, j = 0; i < 32; i++) {
 		if(graph[i] == true) {
+			int x = coloring[j];
 			if(colorInUse[coloring[j]]) return false;
 			colorInUse[coloring[j]] = true;
 			Q.push(coloring[j]);
@@ -65,8 +66,25 @@ void ColoredGraph::insert(unsigned position, unsigned color) {
 	}
 }
 
+unsigned ColoredGraph::popcount() const {
+	return graph.popcount();
+}
+
+unsigned ColoredGraph::colors() {
+	return coloring.colors();
+}
+
+unsigned ColoredGraph::minColors() {
+	return graph.minColors();
+}
+
 bool ColoredGraph::operator==(const ColoredGraph & a) const {
 	return (graph == a.graph) && (coloring == a.coloring);
+}
+
+bool ColoredGraph::operator<(const ColoredGraph & a) const {
+	if (unsigned(this->graph) != unsigned(a.graph)) return unsigned(this->graph) < unsigned(a.graph);
+	return unsigned long long(this->coloring) < unsigned long long(a.coloring);
 }
 
 std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
@@ -98,6 +116,7 @@ std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
 	return os;
 }
 
+//TODO: A better hashing function(too many collisions)
 size_t std::hash<ColoredGraph>::operator()(const ColoredGraph & a) const {
 	return unsigned long long(a.coloring) + (unsigned long long(unsigned(a.graph)) << 32);
 }

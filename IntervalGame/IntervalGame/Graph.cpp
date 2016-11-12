@@ -41,6 +41,7 @@ unsigned Graph::popcount() const {
 }
 
 bool Graph::isValid() const {
+	if (val == 0) return true;
 	if((val & 1) == 0) return false;
 	int count = 1;
 	int open = 1;

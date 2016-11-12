@@ -13,8 +13,12 @@ public:
 	bool isValid();
 	void normailze();
 	void insert(unsigned position, unsigned color);
+	unsigned popcount() const;
+	unsigned colors();
+	unsigned minColors();
 
 	bool operator==(const ColoredGraph& a) const;
+	bool operator<(const ColoredGraph& a) const;
 
 	friend std::ostream& operator<<(std::ostream &, ColoredGraph &);
 	friend std::hash<ColoredGraph>;
