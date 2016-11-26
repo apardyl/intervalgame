@@ -12,7 +12,7 @@ public:
 	ColoredGraph();
 	bool isValid();
 	void normailze();
-	void insert(unsigned position, unsigned color);
+	bool insert(unsigned position, unsigned end, unsigned color);
 	unsigned popcount() const;
 	unsigned colors();
 	unsigned minColors();

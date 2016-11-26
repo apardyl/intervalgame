@@ -41,29 +41,40 @@ void ColoredGraph::normailze() {
 	coloring.normalize();
 }
 
-void ColoredGraph::insert(unsigned position, unsigned color) {
-	int q = 1000;
-	int p = 0;
+bool ColoredGraph::insert(unsigned position, unsigned end, unsigned color) {
+	int open = 0;
+	unsigned i = 0, j = 0;
 
-	for(unsigned i = 0, j = 0; i < 32 && i <= position; i++) {
-		if(i == position) {
+	for (; i < 32; i++) {
+		if(i==position) {
 			graph.insert(i, true);
-			q = p;
 			coloring.insert(j, color);
 			j++;
-			continue;
+			i++;
+			break;
 		}
 		if(graph[i] == true) {
-			p++;
+			open++;
 			j++;
 		}
 		else {
-			if(q == 0) {
-				graph.insert(i, false);
-			}
-			q--;
+			open--;
 		}
 	}
+	for(;i<32 && open > 0;i++) {
+		if(graph[i]==0) {
+			open--;
+		}
+	}
+	for(;i<32;i++) {
+		if(end == 0) {
+			graph.insert(i, false);
+			return true;
+		}
+		if (graph[i] == false) return false;
+		end--;
+	}
+	return false;
 }
 
 unsigned ColoredGraph::popcount() const {
