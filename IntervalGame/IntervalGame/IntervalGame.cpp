@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <map>
 #include <algorithm>
+#include <float.h>
 
 #include "ColoredGraph.h"
 

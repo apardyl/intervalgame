@@ -53,12 +53,12 @@ unsigned Coloring::colors() {
 void Coloring::insert(const unsigned position, const unsigned color) {
 	if(position >= 16) throw std::out_of_range("No more than 16 elements allowed");
 	if(color >= 16) throw std::out_of_range("Colors in range 0 to 15");
-	if((val & (unsigned long long(0x0F) << (4 * 15))) != 0) throw std::out_of_range("Coloring full");
+	if((val & (static_cast<unsigned long long>(0x0F) << (4 * 15))) != 0) throw std::out_of_range("Coloring full");
 
 	//a work around for undefined behaviour when shifting left unsigned by its length
-	unsigned long long mask = (position == 0) ? 0 : (~unsigned long long(0)) >> (64 - (position * 4)); 
+	unsigned long long mask = (position == 0) ? 0 : (~static_cast<unsigned long long>(0)) >> (64 - (position * 4)); 
 
-	val = ((val & (~mask)) << 4) | (val & mask) | (unsigned long long(color) << position * 4);
+	val = ((val & (~mask)) << 4) | (val & mask) | (static_cast<unsigned long long>(color) << position * 4);
 }
 
 Coloring::operator unsigned long long() const {
@@ -79,9 +79,9 @@ Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
 
 void Coloring::Proxy::operator=(const unsigned color) const {
 	if(color >= 16) throw std::out_of_range("Colors in range 0 to 15");
-	coloring.val = (coloring.val & ~(unsigned long long(0x0F) << 4 * key)) | (unsigned long long(color) << 4 * key);
+	coloring.val = (coloring.val & ~(static_cast<unsigned long long>(0x0F) << 4 * key)) | (static_cast<unsigned long long>(color) << 4 * key);
 }
 
 Coloring::Proxy::operator unsigned const() const {
-	return ((coloring.val & (unsigned long long(0x0F) << 4 * key)) >> 4 * key);
+	return ((coloring.val & (static_cast<unsigned long long>(0x0F) << 4 * key)) >> 4 * key);
 }

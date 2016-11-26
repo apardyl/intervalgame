@@ -48,7 +48,7 @@ bool Graph::isValid() const {
 	unsigned i = 2;
 	for(;; i <<= 1) {
 		count += ((val & i) == 0) ? -1 : (open++ , 1);
-		if(count == 0) return open == popcount();
+		if(count < 0) return open == popcount();
 		if(i == (1 << 31)) return false;
 	}
 }
@@ -69,7 +69,7 @@ void Graph::insert(const unsigned position, const bool flag) {
 	if(val & (1<<31)) throw std::out_of_range("Graph full");
 
 	//a work around for undefined behaviour when shifting left unsigned by its length
-	unsigned mask = (position == 0) ? 0 : long long unsigned(~(unsigned(0))) >> (32 - position);
+	unsigned mask = (position == 0) ? 0 : static_cast<long long unsigned>(~(unsigned(0))) >> (32 - position);
 
 	val = ((val & (~mask)) << 1) | (val & mask) | (unsigned(flag) << position);
 }

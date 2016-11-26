@@ -84,11 +84,11 @@ bool ColoredGraph::operator==(const ColoredGraph & a) const {
 
 bool ColoredGraph::operator<(const ColoredGraph & a) const {
 	if (unsigned(this->graph) != unsigned(a.graph)) return unsigned(this->graph) < unsigned(a.graph);
-	return unsigned long long(this->coloring) < unsigned long long(a.coloring);
+	return static_cast<unsigned long long>(this->coloring) < static_cast<unsigned long long>(a.coloring);
 }
 
 std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
-	os << "Graph: " << unsigned(cgraph.graph) << " Coloring: " << long long unsigned(cgraph.coloring)
+	os << "Graph: " << unsigned(cgraph.graph) << " Coloring: " << static_cast<long long unsigned>(cgraph.coloring)
 		<< " Valid: " << cgraph.isValid() << " MinColors: " << cgraph.graph.minColors() << std::endl;
 
 	int col = cgraph.coloring.colors();
@@ -118,5 +118,5 @@ std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
 
 //TODO: A better hashing function(too many collisions)
 size_t std::hash<ColoredGraph>::operator()(const ColoredGraph & a) const {
-	return unsigned long long(a.coloring) + (unsigned long long(unsigned(a.graph)) << 32);
+	return static_cast<unsigned long long>(a.coloring) ^ static_cast<unsigned long long>(unsigned(a.graph));
 }
