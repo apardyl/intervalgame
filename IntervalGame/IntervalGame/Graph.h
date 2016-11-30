@@ -14,8 +14,8 @@ public:
 		unsigned key;
 	public:
 		Proxy(Graph & c, unsigned k);
-		void operator=(const bool s) const;
-		operator bool const() const;
+		void operator=(const bool s);
+		operator bool() const;
 	};
 
 	friend class Proxy;

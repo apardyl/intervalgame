@@ -11,7 +11,7 @@ private:
 public:
 	ColoredGraph();
 	bool isValid();
-	void normailze();
+	void normalize();
 	bool insert(unsigned position, unsigned end, unsigned color);
 	unsigned popcount() const;
 	unsigned colors();

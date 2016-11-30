@@ -13,7 +13,6 @@ bool ColoredGraph::isValid() {
 
 	for(int i = 0, j = 0; i < 32; i++) {
 		if(graph[i] == true) {
-			int x = coloring[j];
 			if(colorInUse[coloring[j]]) return false;
 			colorInUse[coloring[j]] = true;
 			Q.push(coloring[j]);
@@ -30,7 +29,7 @@ bool ColoredGraph::isValid() {
 	return false;
 }
 
-void ColoredGraph::normailze() {
+void ColoredGraph::normalize() {
 	Graph tmp = graph;
 	tmp.reverse();
 	if(unsigned(tmp) < unsigned(graph)) {
@@ -102,9 +101,9 @@ std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
 	os << "Graph: " << unsigned(cgraph.graph) << " Coloring: " << static_cast<long long unsigned>(cgraph.coloring)
 		<< " Valid: " << cgraph.isValid() << " MinColors: " << cgraph.graph.minColors() << std::endl;
 
-	int col = cgraph.coloring.colors();
-	for(int i = 1; i <= col; i++) {
-		std::queue<int> Q;
+	unsigned col = cgraph.coloring.colors();
+	for(unsigned i = 1; i <= col; i++) {
+		std::queue<unsigned> Q;
 		bool colorInUse = false;
 
 		for(int k = 0, j = 0; k < 32; k++) {

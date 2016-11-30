@@ -82,6 +82,6 @@ void Coloring::Proxy::operator=(const unsigned color) const {
 	coloring.val = (coloring.val & ~(static_cast<unsigned long long>(0x0F) << 4 * key)) | (static_cast<unsigned long long>(color) << 4 * key);
 }
 
-Coloring::Proxy::operator unsigned const() const {
+Coloring::Proxy::operator unsigned() const {
 	return ((coloring.val & (static_cast<unsigned long long>(0x0F) << 4 * key)) >> 4 * key);
 }

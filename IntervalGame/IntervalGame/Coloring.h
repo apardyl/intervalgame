@@ -14,7 +14,7 @@ public:
 	public:
 		Proxy(Coloring & c, unsigned k);
 		void operator=(const unsigned color) const;
-		operator unsigned const() const;
+		operator unsigned() const;
 	};
 
 	friend class Proxy;

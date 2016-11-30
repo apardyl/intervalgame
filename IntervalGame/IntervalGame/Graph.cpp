@@ -15,11 +15,11 @@ Graph::Graph(unsigned a) : val(a) {
 Graph::Proxy::Proxy(Graph & c, unsigned k) : graph(c), key(k) {
 }
 
-void Graph::Proxy::operator=(const bool s) const {
+void Graph::Proxy::operator=(const bool s) {
 	graph.val = (graph.val & ~(1 << key)) | (unsigned(s) << key);
 }
 
-Graph::Proxy::operator bool const() const {
+Graph::Proxy::operator bool() const {
 	return ((graph.val & (1 << key)) != 0);
 }
 
@@ -44,12 +44,12 @@ bool Graph::isValid() const {
 	if (val == 0) return true;
 	if((val & 1) == 0) return false;
 	int count = 1;
-	int open = 1;
+	unsigned open = 1;
 	unsigned i = 2;
 	for(;; i <<= 1) {
 		count += ((val & i) == 0) ? -1 : (open++ , 1);
 		if(count < 0) return open == popcount();
-		if(i == (1 << 31)) return false;
+		if(i == (1u << 31)) return false;
 	}
 }
 

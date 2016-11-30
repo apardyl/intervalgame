@@ -10,15 +10,26 @@
 #include "ColoredGraph.h"
 
 unsigned depth = 0;
+unsigned target_width = 0;
 
 std::unordered_map<ColoredGraph, double> gameStates;
 
+double score(ColoredGraph cgraph) {
+  if ( target_width > 0 ) {
+    if ( cgraph.colors() == target_width )
+    	return double(cgraph.colors()) / cgraph.minColors();
+    return 1;
+  }
+  return double(cgraph.colors()) / cgraph.minColors();
+}
+
 double minMax(ColoredGraph cgraph) {
+	if (gameStates.count(cgraph) == 1) return gameStates[cgraph];
+
 	unsigned colors = cgraph.colors();
 
 	if(cgraph.popcount() >= depth) {
-		//std::cout << cgraph << double(colors) / cgraph.minColors() << std::endl;
-		return double(colors) / cgraph.minColors();
+	  return score(cgraph);
 	}
 
 	double max = -DBL_MAX;
@@ -35,10 +46,10 @@ double minMax(ColoredGraph cgraph) {
 				}
 
 				if (!ncgraph.isValid()) continue;
-				ncgraph.normailze();
+				ncgraph.normalize();
 
 				double x;
-				if (gameStates.count(cgraph) == 1) x = gameStates[cgraph];
+				if (gameStates.count(ncgraph) == 1) x = gameStates[ncgraph];
 				else x = minMax(ncgraph);
 
 				min = std::min(min, x);
@@ -46,6 +57,8 @@ double minMax(ColoredGraph cgraph) {
 			if (min != DBL_MAX) max = std::max(max, min);
 		}
 	}
+
+  max = std::max(max, score(cgraph));
 
 	gameStates[cgraph] = max;
 	//std::cout << cgraph << max << std::endl;
@@ -66,4 +79,3 @@ int main() {
 
     return 0;
 }
-
