@@ -7,14 +7,13 @@
 #include <map>
 #include <mutex>
 #include <set>
-#include <unordered_map>
-#include <unordered_set>
+//#include <unordered_map>
 
 #include "ColoredGraph.h"
 #include "ThreadPool.h"
 
 unsigned depth = 0;
-unsigned target_width = 4;
+unsigned target_width = 0;
 
 template<class Key, class T> 
 struct Results {
@@ -22,7 +21,7 @@ struct Results {
   typedef typename map_type::size_type size_type;
   typedef typename map_type::key_type key_type;
   typedef typename map_type::mapped_type mapped_type;
-  typedef typename std::function<void(key_type)> function_type;
+  typedef std::function<void(key_type)> function_type;
 
   ThreadPool<void, key_type>& tp;
   function_type sched;

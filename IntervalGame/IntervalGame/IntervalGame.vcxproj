@@ -155,6 +155,7 @@
     <ClInclude Include="Coloring.h" />
     <ClInclude Include="ColoredGraph.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

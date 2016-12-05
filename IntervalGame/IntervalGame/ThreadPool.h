@@ -10,7 +10,6 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
-#include <unistd.h>
 
 template<class Result, class ...Args>
 
@@ -22,7 +21,7 @@ class ThreadPool {
   template<size_t N, class ...Params>
   struct Run {
     static inline Result run(function &&f, args &&a, Params &&...p) {
-      return Run<N-1, class std::tuple_element<N-1, args>::type, Params...>::run(std::forward<function>(f), std::forward<args>(a), std::forward<Params>(p)..., std::forward<class std::tuple_element<N-1, args>::type>(std::get<N-1>(a)));
+      return Run<N-1, typename std::tuple_element<N-1, args>::type, Params...>::run(std::forward<function>(f), std::forward<args>(a), std::forward<Params>(p)..., std::forward<typename std::tuple_element<N-1, args>::type>(std::get<N-1>(a)));
     }
   };
   template<class ...Params>
@@ -51,7 +50,7 @@ class ThreadPool {
         std::unique_ptr<job> j;
         {
           std::unique_lock<std::mutex> lock(tp.mutex);
-          tp.cv_consumer.wait(lock, [this](){return tp.shutdown or not tp.jobs.empty();});
+          tp.cv_consumer.wait(lock, [this](){return tp.shutdown || !tp.jobs.empty();});
           if (tp.shutdown)
             return;
           j = std::unique_ptr<job>(new job(tp.jobs.front()));
@@ -67,7 +66,7 @@ class ThreadPool {
   public:
   ThreadPool(size_t concurency = 0, size_t length = 0) : shutdown(false), length(length) {
     if(concurency == 0)
-      concurency = ::sysconf(_SC_NPROCESSORS_ONLN);
+      concurency = std::thread::hardware_concurrency();
     for(size_t i=0; i<concurency; i++)
       workers.push_back(std::thread(Worker(*this)));
   }
@@ -92,7 +91,7 @@ class ThreadPool {
   void push_back(function f, args a) {
     std::unique_lock<std::mutex> lock(mutex);
     if (length > 0)
-      cv_producer.wait(lock, [this](){return shutdown or jobs.size() < length;});
+      cv_producer.wait(lock, [this](){return shutdown || jobs.size() < length;});
     if (shutdown)
       return;
     jobs.emplace_back(f, a);

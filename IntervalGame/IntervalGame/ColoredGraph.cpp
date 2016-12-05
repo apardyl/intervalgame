@@ -48,7 +48,6 @@ bool ColoredGraph::insert(unsigned position, unsigned end, unsigned color) {
 		if(i==position) {
 			graph.insert(i, true);
 			coloring.insert(j, color);
-			j++;
 			i++;
 			break;
 		}
