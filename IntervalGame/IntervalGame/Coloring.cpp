@@ -35,7 +35,7 @@ unsigned Coloring::normalize() {
 	return next - 1;
 }
 
-bool Coloring::isValid() {
+bool Coloring::isValid() const {
 	int i = 0;
 	for(; i < 16; i++) {
 		if((*this)[i] == 0) break;
@@ -46,8 +46,17 @@ bool Coloring::isValid() {
 	return true;
 }
 
-unsigned Coloring::colors() {
-	return normalize();
+unsigned Coloring::colors() const {
+	unsigned perm[16] = {0};
+	unsigned next = 1;
+	for(int i = 0; i < 16; i++) {
+		if((*this)[i] == 0) break;
+		if(perm[(*this)[i]] == 0) {
+			perm[(*this)[i]] = next;
+			next++;
+		}
+	}
+	return next - 1;
 }
 
 void Coloring::insert(const unsigned position, const unsigned color) {
@@ -70,11 +79,19 @@ Coloring::Proxy Coloring::operator[](const unsigned k) {
 	return Proxy(*this, k);
 }
 
+Coloring::ConstProxy Coloring::operator[](const unsigned k) const {
+	if(k >= 16) throw std::out_of_range("No more than 16 elements allowed");
+	return ConstProxy(*this, k);
+}
+
 bool Coloring::operator==(const Coloring & a) const {
 	return val == a.val;
 }
 
 Coloring::Proxy::Proxy(Coloring & c, unsigned k) : coloring(c), key(k) {
+}
+
+Coloring::ConstProxy::ConstProxy(const Coloring & c, unsigned k) : coloring(c), key(k) {
 }
 
 void Coloring::Proxy::operator=(const unsigned color) const {
@@ -83,5 +100,9 @@ void Coloring::Proxy::operator=(const unsigned color) const {
 }
 
 Coloring::Proxy::operator unsigned() const {
+	return ((coloring.val & (static_cast<unsigned long long>(0x0F) << 4 * key)) >> 4 * key);
+}
+
+Coloring::ConstProxy::operator unsigned() const {
 	return ((coloring.val & (static_cast<unsigned long long>(0x0F) << 4 * key)) >> 4 * key);
 }

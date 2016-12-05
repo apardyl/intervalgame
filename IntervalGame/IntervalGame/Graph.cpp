@@ -15,6 +15,9 @@ Graph::Graph(unsigned a) : val(a) {
 Graph::Proxy::Proxy(Graph & c, unsigned k) : graph(c), key(k) {
 }
 
+Graph::ConstProxy::ConstProxy(const Graph & c, unsigned k) : graph(c), key(k) {
+}
+
 void Graph::Proxy::operator=(const bool s) {
 	graph.val = (graph.val & ~(1 << key)) | (unsigned(s) << key);
 }
@@ -23,9 +26,18 @@ Graph::Proxy::operator bool() const {
 	return ((graph.val & (1 << key)) != 0);
 }
 
+Graph::ConstProxy::operator bool() const {
+	return ((graph.val & (1 << key)) != 0);
+}
+
 Graph::Proxy Graph::operator[](const unsigned k) {
 	if(k >= 32) throw std::out_of_range("No more than 32 elements allowed");
 	return Proxy(*this, k);
+}
+
+Graph::ConstProxy Graph::operator[](const unsigned k) const {
+	if(k >= 32) throw std::out_of_range("No more than 32 elements allowed");
+	return ConstProxy(*this, k);
 }
 
 bool Graph::operator==(const Graph & a) const {
@@ -74,7 +86,7 @@ void Graph::insert(const unsigned position, const bool flag) {
 	val = ((val & (~mask)) << 1) | (val & mask) | (unsigned(flag) << position);
 }
 
-unsigned Graph::minColors() {
+unsigned Graph::minColors() const {
 	unsigned used = 0;
 	unsigned free = 0;
 	for(unsigned i = 0, j = 0; i<32u && j<popcount(); i++) {

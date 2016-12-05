@@ -10,7 +10,7 @@ private:
 	Coloring coloring;
 public:
 	ColoredGraph();
-	bool isValid();
+	bool isValid() const;
 	void normalize();
 	bool insert(unsigned position, unsigned end, unsigned color);
 	unsigned popcount() const;
@@ -20,7 +20,7 @@ public:
 	bool operator==(const ColoredGraph& a) const;
 	bool operator<(const ColoredGraph& a) const;
 
-	friend std::ostream& operator<<(std::ostream &, ColoredGraph &);
+	friend std::ostream& operator<<(std::ostream &, const ColoredGraph &);
 	friend std::hash<ColoredGraph>;
 };
 

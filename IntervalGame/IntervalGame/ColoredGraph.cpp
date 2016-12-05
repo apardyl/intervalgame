@@ -4,7 +4,7 @@
 ColoredGraph::ColoredGraph() {
 }
 
-bool ColoredGraph::isValid() {
+bool ColoredGraph::isValid() const {
 	if(!graph.isValid()) return false;
 	if(!coloring.isValid()) return false;
 
@@ -97,7 +97,7 @@ bool ColoredGraph::operator<(const ColoredGraph & a) const {
 	return static_cast<unsigned long long>(this->coloring) < static_cast<unsigned long long>(a.coloring);
 }
 
-std::ostream& operator<<(std::ostream & os, ColoredGraph & cgraph) {
+std::ostream& operator<<(std::ostream & os, const ColoredGraph & cgraph) {
 	os << "Graph: " << unsigned(cgraph.graph) << " Coloring: " << static_cast<long long unsigned>(cgraph.coloring)
 		<< " Valid: " << cgraph.isValid() << " MinColors: " << cgraph.graph.minColors() << std::endl;
 
