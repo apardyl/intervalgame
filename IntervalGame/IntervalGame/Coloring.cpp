@@ -70,6 +70,14 @@ void Coloring::insert(const unsigned position, const unsigned color) {
 	val = ((val & (~mask)) << 4) | (val & mask) | (static_cast<unsigned long long>(color) << position * 4);
 }
 
+char Coloring::shortHash() const {
+	char h = 0;
+	for(unsigned long long v = val; v != 0; v>>=2) {
+		h ^= v & 0x3;
+	}
+	return h;
+}
+
 Coloring::operator unsigned long long() const {
 	return val;
 }

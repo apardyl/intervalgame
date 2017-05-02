@@ -164,6 +164,7 @@ int main() {
 		ColoredGraph graph;
 		double x = result(graph);
 		std::cout << i << ": k: " << x << " mapSize: " << gameResults.size() << std::endl;
+		//gameResults.resultMap.statistics();
 	}
 
 	std::cin.get();

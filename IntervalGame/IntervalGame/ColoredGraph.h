@@ -16,9 +16,10 @@ public:
 	void normalize();
 	bool insert(unsigned position, unsigned end, unsigned color);
 	unsigned popcount() const;
-	unsigned colors();
-	unsigned minColors();
+	unsigned colors() const;
+	unsigned minColors() const;
 	unsigned rawGraph() const;
+	char shortColorHash() const;
 
 	bool operator==(const ColoredGraph& a) const;
 	bool operator<(const ColoredGraph& a) const;

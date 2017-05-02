@@ -79,16 +79,20 @@ unsigned ColoredGraph::popcount() const {
 	return graph.popcount();
 }
 
-unsigned ColoredGraph::colors() {
+unsigned ColoredGraph::colors() const {
 	return coloring.colors();
 }
 
-unsigned ColoredGraph::minColors() {
+unsigned ColoredGraph::minColors() const {
 	return graph.minColors();
 }
 
 unsigned ColoredGraph::rawGraph() const {
 	return static_cast<unsigned>(graph);
+}
+
+char ColoredGraph::shortColorHash() const {
+	return coloring.shortHash();
 }
 
 bool ColoredGraph::operator==(const ColoredGraph & a) const {
