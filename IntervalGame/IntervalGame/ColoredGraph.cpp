@@ -87,6 +87,10 @@ unsigned ColoredGraph::minColors() {
 	return graph.minColors();
 }
 
+unsigned ColoredGraph::rawGraph() const {
+	return static_cast<unsigned>(graph);
+}
+
 bool ColoredGraph::operator==(const ColoredGraph & a) const {
 	return (graph == a.graph) && (coloring == a.coloring);
 }

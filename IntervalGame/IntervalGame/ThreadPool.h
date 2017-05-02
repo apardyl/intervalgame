@@ -65,8 +65,8 @@ class ThreadPool {
 
   public:
   ThreadPool(size_t concurency = 0, size_t length = 0) : shutdown(false), length(length) {
-    if(concurency == 0)
-      concurency = std::thread::hardware_concurrency();
+	  if(concurency == 0)
+		  concurency = std::thread::hardware_concurrency();
     for(size_t i=0; i<concurency; i++)
       workers.push_back(std::thread(Worker(*this)));
   }

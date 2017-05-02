@@ -16,6 +16,7 @@ public:
 	unsigned popcount() const;
 	unsigned colors();
 	unsigned minColors();
+	unsigned rawGraph() const;
 
 	bool operator==(const ColoredGraph& a) const;
 	bool operator<(const ColoredGraph& a) const;

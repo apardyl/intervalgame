@@ -18,6 +18,7 @@ SET(IntervalGame_SOURCES
   ${PROJECT_SOURCE_DIR}/Coloring.cpp
   ${PROJECT_SOURCE_DIR}/ColoredGraph.cpp
   ${PROJECT_SOURCE_DIR}/IntervalGame.cpp
+  ${PROJECT_SOURCE_DIR}/GraphMap.cpp
 )
 
 ADD_EXECUTABLE( IntervalGame ${IntervalGame_SOURCES} )
