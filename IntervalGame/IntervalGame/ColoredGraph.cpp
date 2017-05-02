@@ -129,7 +129,10 @@ std::ostream& operator<<(std::ostream & os, const ColoredGraph & cgraph) {
 	return os;
 }
 
-//TODO: A better hashing function(too many collisions)
 size_t std::hash<ColoredGraph>::operator()(const ColoredGraph & a) const {
 	return static_cast<unsigned long long>(a.coloring) ^ static_cast<unsigned long long>(unsigned(a.graph));
+}
+
+size_t graphMapHash::operator()(const ColoredGraph &a) const {
+	return static_cast<unsigned long long>(a.coloring);
 }

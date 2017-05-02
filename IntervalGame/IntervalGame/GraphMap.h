@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <mutex>
 
-template <typename T, typename container = std::unordered_map<ColoredGraph, T>>
+template <typename T, typename container = std::unordered_map<ColoredGraph, T, graphMapHash>>
 class CGraphMap {
 private:
 	container map[1048576];
