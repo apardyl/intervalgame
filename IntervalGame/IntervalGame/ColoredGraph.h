@@ -4,8 +4,6 @@
 #include "Coloring.h"
 #include <ostream>
 
-struct graphMapHash;
-
 class ColoredGraph {
 private:
 	Graph graph;
@@ -19,18 +17,12 @@ public:
 	unsigned colors() const;
 	unsigned minColors() const;
 	unsigned rawGraph() const;
-	char shortColorHash() const;
 
 	bool operator==(const ColoredGraph& a) const;
 	bool operator<(const ColoredGraph& a) const;
 
 	friend std::ostream& operator<<(std::ostream &, const ColoredGraph &);
 	friend std::hash<ColoredGraph>;
-	friend graphMapHash;
-};
-
-struct graphMapHash {
-	size_t operator()(const ColoredGraph& a) const;
 };
 
 namespace std {

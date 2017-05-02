@@ -38,5 +38,4 @@ public:
 	bool isValid() const;
 	unsigned colors() const;
 	void insert(const unsigned position, const unsigned color);
-	char shortHash() const;
 };

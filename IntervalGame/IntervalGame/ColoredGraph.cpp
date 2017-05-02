@@ -91,10 +91,6 @@ unsigned ColoredGraph::rawGraph() const {
 	return static_cast<unsigned>(graph);
 }
 
-char ColoredGraph::shortColorHash() const {
-	return coloring.shortHash();
-}
-
 bool ColoredGraph::operator==(const ColoredGraph & a) const {
 	return (graph == a.graph) && (coloring == a.coloring);
 }
@@ -135,8 +131,4 @@ std::ostream& operator<<(std::ostream & os, const ColoredGraph & cgraph) {
 
 size_t std::hash<ColoredGraph>::operator()(const ColoredGraph & a) const {
 	return static_cast<unsigned long long>(a.coloring) ^ static_cast<unsigned long long>(unsigned(a.graph));
-}
-
-size_t graphMapHash::operator()(const ColoredGraph &a) const {
-	return static_cast<unsigned long long>(a.coloring);
 }
