@@ -5,8 +5,7 @@
 #include <float.h>
 #include <iostream>
 #include <mutex>
-#include <set>
-#include <utility>
+#include <unordered_set>
 
 #include "ColoredGraph.h"
 #include "ThreadPool.h"
@@ -63,7 +62,7 @@ struct Results {
 		resultMap[key] = val;
 	}
 
-	void schedule(const key_type &key, const std::vector<ColoredGraph> &tasks) {
+	void schedule(const key_type &key, const std::unordered_set<ColoredGraph> &tasks) {
 #ifdef DEBUG
 		std::unique_lock<std::mutex> lock(mutex);
 		    std::cerr << "Scheduling for" << key << std::endl;
@@ -78,6 +77,7 @@ struct Results {
 				tp.push_back(sched, task);
 			}
 		}
+		tp.push_back(sched, key);
 	}
 };
 
@@ -106,7 +106,7 @@ void schedule(ColoredGraph cgraph) {
 
 	double max = -DBL_MAX;
 
-	std::set<ColoredGraph> missing;
+	std::unordered_set<ColoredGraph> missing;
 	int missingCount = 0;
 
 	for(unsigned i = 0; i <= cgraph.popcount() * 2 + 1; i++) {
@@ -141,10 +141,7 @@ void schedule(ColoredGraph cgraph) {
 	if(missingCount == 0)
 		gameResults.set(cgraph, max);
 	else {
-		std::vector<ColoredGraph> m;
-		for(auto a : missing) m.push_back(a);
-		m.push_back(cgraph);
-		gameResults.schedule(cgraph, m);
+		gameResults.schedule(cgraph, missing);
 	}
 	//std::cout << cgraph << max << std::endl;
 }
