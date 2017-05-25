@@ -27,6 +27,9 @@
     <ClCompile Include="ColoredGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Array4Bit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Coloring.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GraphMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Array4Bit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

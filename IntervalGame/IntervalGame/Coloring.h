@@ -1,38 +1,10 @@
 #pragma once
+#include "Array4Bit.h"
 
-class Coloring {
-private:
-	unsigned long long val;
+class Coloring : public Array4Bit {
 public:
-	Coloring();
-	Coloring(unsigned long long);
+	Coloring(unsigned long long a = 0);
 
-	class Proxy {
-	private:
-		Coloring & coloring;
-		unsigned key;
-	public:
-		Proxy(Coloring & c, unsigned k);
-		void operator=(const unsigned color) const;
-		operator unsigned() const;
-	};
-	class ConstProxy {
-	private:
-		const Coloring & coloring;
-		unsigned key;
-	public:
-		ConstProxy(const Coloring & c, unsigned k);
-		operator unsigned() const;
-	};
-
-	friend class Proxy;
-	friend class ConstProxy;
-
-	Proxy operator[](const unsigned k);
-	ConstProxy operator[](const unsigned k) const;
-	bool operator==(const Coloring& a) const;
-
-	explicit operator unsigned long long() const;
 	void reverse();
 	unsigned normalize();
 	bool isValid() const;
