@@ -1,65 +1,76 @@
 #pragma once
 
-#include "ColoredGraph.h"
+#include "IntervalGraph.h"
 #include <map>
 #include <mutex>
 #include <iostream>
 
-template <typename T, typename container = std::map<ColoredGraph, T>>
+template <typename T, int hashtableSize = 1466329, typename container = std::map<IntervalGraph, T>>
 class CGraphMap {
 private:
-	container map[1466329];
-	std::mutex locks[1466329];
+	container map[hashtableSize];
+	std::mutex locks[hashtableSize];
 public:
-	T& operator[](const ColoredGraph &c);
+	T& operator[](const IntervalGraph &c);
 	size_t size();
-	size_t count(const ColoredGraph &c);
+	size_t count(const IntervalGraph &c);
 	void clear();
 	void statistics();
-	static unsigned hash(const ColoredGraph&c);
+	void printContent();
+	static unsigned hash(const IntervalGraph&c);
 };
 
-template <typename T, typename container>
-T& CGraphMap<T, container>::operator[](const ColoredGraph &c) {
+template <typename T, int hashtableSize, typename container>
+T& CGraphMap<T, hashtableSize, container>::operator[](const IntervalGraph &c) {
 	std::unique_lock<std::mutex> lock(locks[hash(c)]);
 	return map[hash(c)][c];
 }
 
-template <typename T, typename container>
-size_t CGraphMap<T, container>::size() {
+template <typename T, int hashtableSize, typename container>
+size_t CGraphMap<T, hashtableSize, container>::size() {
 	size_t s = 0;
-	for(int i = 1466328; i >= 0; i--) {
+	for(int i = hashtableSize - 1; i >= 0; --i) {
 		std::unique_lock<std::mutex> lock(locks[i]);
 		s += map[i].size();
 	}
 	return s;
 }
 
-template <typename T, typename container>
-size_t CGraphMap<T, container>::count(const ColoredGraph &c) {
+template <typename T, int hashtableSize, typename container>
+size_t CGraphMap<T, hashtableSize, container>::count(const IntervalGraph &c) {
 	std::unique_lock<std::mutex> lock(locks[hash(c)]);
 	return map[hash(c)].count(c);
 }
 
-template <typename T, typename container>
-void CGraphMap<T, container>::clear() {
-	for(int i = 1466328; i >= 0; i--) map[i].clear();
+template <typename T, int hashtableSize, typename container>
+void CGraphMap<T, hashtableSize, container>::clear() {
+	for(int i = hashtableSize - 1; i >= 0; --i) map[i].clear();
 }
 
-template <typename T, typename container>
-void CGraphMap<T, container>::statistics() {
+template <typename T, int hashtableSize, typename container>
+void CGraphMap<T, hashtableSize, container>::statistics() {
 	size_t s = 0, zeros = 0;
 	int max = 0;
-	for(int i = 1466328; i >= 0; i--) {
+	for(int i = hashtableSize - 1; i >= 0; --i) {
 		std::unique_lock<std::mutex> lock(locks[i]);
 		s += map[i].size();
 		if(map[i].size() == 0) zeros++;
-		if(map[i].size() > max) max = map[i].size();
+		if(map[i].size() > max) max =static_cast<int>(map[i].size());
 	}
 	std::cout << "size: " << s << " zeros: " << zeros << " maxLoad: " << max << std::endl;
 }
 
-template <typename T, typename container>
-unsigned CGraphMap<T, container>::hash(const ColoredGraph &c) {
-	return static_cast<unsigned>(std::hash<ColoredGraph>{}(c) % 1466329);
+template <typename T, int hashtableSize, typename container>
+void CGraphMap<T, hashtableSize, container>::printContent() {
+	for(int i = 0; i < hashtableSize; ++i) {
+		for(auto a : map[i]) {
+			std::cout << a.first << a.second << std::endl;
+		}
+	}
+}
+
+
+template <typename T, int hashtableSize, typename container>
+unsigned CGraphMap<T, hashtableSize, container>::hash(const IntervalGraph &c) {
+	return static_cast<unsigned>(std::hash<IntervalGraph>{}(c) % hashtableSize);
 }

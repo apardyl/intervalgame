@@ -7,24 +7,27 @@
 #include <mutex>
 #include <unordered_set>
 
-#include "ColoredGraph.h"
+#include "IntervalGraph.h"
 #include "ThreadPool.h"
 #include "GraphMap.h"
 
-unsigned depth = 0;
-const unsigned target_width = 0;
+
+const unsigned TARGET_WIDTH = 0;
+const unsigned MAX_NESTED = 0;
 
 //#define DEBUG
 
+unsigned depth = 0;
+
 template <class T>
 struct Results {
-	typedef ColoredGraph key_type;
-	typedef std::function<void(ColoredGraph)> function_type;
+	typedef IntervalGraph key_type;
+	typedef std::function<void(IntervalGraph)> function_type;
 
-	ThreadPool<void, ColoredGraph> &tp;
+	ThreadPool<void, IntervalGraph> &tp;
 	function_type sched;
 
-	Results(ThreadPool<void, ColoredGraph> &tp, function_type schedule) :
+	Results(ThreadPool<void, IntervalGraph> &tp, function_type schedule) :
 		tp(tp),
 		sched(schedule) {
 	}
@@ -62,7 +65,7 @@ struct Results {
 		resultMap[key] = val;
 	}
 
-	void schedule(const key_type &key, const std::unordered_set<ColoredGraph> &tasks) {
+	void schedule(const key_type &key, const std::unordered_set<IntervalGraph> &tasks) {
 #ifdef DEBUG
 		std::unique_lock<std::mutex> lock(mutex);
 		    std::cerr << "Scheduling for" << key << std::endl;
@@ -81,46 +84,47 @@ struct Results {
 	}
 };
 
-void schedule(ColoredGraph);
-ThreadPool<void, ColoredGraph> tp;
+void schedule(IntervalGraph);
+#ifdef DEBUG
+ThreadPool<void, IntervalGraph> tp(1)
+#else
+ThreadPool<void, IntervalGraph> tp;
+#endif
 Results<double> gameResults(tp, schedule);
 
-double score(ColoredGraph cgraph) {
-	if(target_width > 0) {
-		if(cgraph.minColors() <= target_width)
-			return double(cgraph.colors()) / target_width;
+double score(IntervalGraph cgraph) {
+	if(TARGET_WIDTH > 0) {
+		if(cgraph.minColors() <= TARGET_WIDTH)
+			return double(cgraph.colors()) / TARGET_WIDTH;
 		return 1;
 	}
 	return double(cgraph.colors()) / cgraph.minColors();
 }
 
-void schedule(ColoredGraph cgraph) {
+void schedule(IntervalGraph cgraph) {
 	if(gameResults.count(cgraph) == 1) return;
 
 	unsigned colors = cgraph.colors();
 
-	if(cgraph.popcount() >= depth) {
+	if(cgraph.length() >= depth) {
 		gameResults.set(cgraph, score(cgraph));
 		return;
 	}
 
 	double max = -DBL_MAX;
 
-	std::unordered_set<ColoredGraph> missing;
+	std::unordered_set<IntervalGraph> missing;
 	int missingCount = 0;
 
-	for(unsigned i = 0; i <= cgraph.popcount() * 2 + 1; i++) {
-		bool stop = false;
-		for(unsigned k = 0; k <= cgraph.popcount() && !stop; k++) {
+	unsigned cgraphLength = cgraph.length();
+	for(unsigned i = 0; i <= cgraphLength * 2; i++) {
+		for(unsigned k = 0; k <= cgraphLength * 2 - i; k++) {
 			double min = DBL_MAX;
 			for(unsigned j = 1; j <= colors + 1; j++) {
-				ColoredGraph ncgraph = cgraph;
-				if(!ncgraph.insert(i, k, j)) {
-					stop = true;
-					break;
-				}
+				IntervalGraph ncgraph = cgraph;
+				if(!ncgraph.insert(i, k, j)) continue;
 
-				if(!ncgraph.isValid()) continue;
+				if(!ncgraph.isValid(MAX_NESTED)) break;
 				ncgraph.normalize();
 
 				double x = DBL_MAX;
@@ -146,7 +150,7 @@ void schedule(ColoredGraph cgraph) {
 	//std::cout << cgraph << max << std::endl;
 }
 
-double result(ColoredGraph cgraph) {
+double result(IntervalGraph cgraph) {
 	//  std::cout << "Asking for " << cgraph << std::endl;
 	tp.push_back(schedule, cgraph);
 	while(true) {
@@ -161,10 +165,14 @@ int main() {
 	for(int i = 1; i <= 16; i++) {
 		gameResults.clear();
 		depth = i;
-		ColoredGraph graph;
+		IntervalGraph graph;
 		double x = result(graph);
 		std::cout << i << ": k: " << x << std::endl;
 		gameResults.resultMap.statistics();
+#ifdef DEBUG
+		gameResults.resultMap.printContent();
+		std::cin.get();
+#endif
 	}
 
 	std::cin.get();

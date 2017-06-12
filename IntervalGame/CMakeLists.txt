@@ -14,11 +14,9 @@ ENDIF()
 SET( PROJECT_SOURCE_DIR "IntervalGame" )
 
 SET(IntervalGame_SOURCES
-  ${PROJECT_SOURCE_DIR}/Graph.cpp
-  ${PROJECT_SOURCE_DIR}/Coloring.cpp
-  ${PROJECT_SOURCE_DIR}/ColoredGraph.cpp
-  ${PROJECT_SOURCE_DIR}/IntervalGame.cpp
   ${PROJECT_SOURCE_DIR}/Array4Bit.cpp
+  ${PROJECT_SOURCE_DIR}/IntervalGraph.cpp
+  ${PROJECT_SOURCE_DIR}/IntervalGame.cpp
 )
 
 ADD_EXECUTABLE( game ${IntervalGame_SOURCES} )

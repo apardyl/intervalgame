@@ -155,17 +155,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Array4Bit.cpp" />
-    <ClCompile Include="Coloring.cpp" />
-    <ClCompile Include="ColoredGraph.cpp" />
-    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="IntervalGame.cpp" />
+    <ClCompile Include="IntervalGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array4Bit.h" />
-    <ClInclude Include="Coloring.h" />
-    <ClInclude Include="ColoredGraph.h" />
-    <ClInclude Include="Graph.h" />
     <ClInclude Include="GraphMap.h" />
+    <ClInclude Include="IntervalGraph.h" />
     <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
