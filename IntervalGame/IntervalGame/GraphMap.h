@@ -64,7 +64,7 @@ template <typename T, int hashtableSize, typename container>
 void CGraphMap<T, hashtableSize, container>::printContent() {
 	for(int i = 0; i < hashtableSize; ++i) {
 		for(auto a : map[i]) {
-			std::cout << a.first << a.second << std::endl;
+			std::cout << "graph: " << a.first << "score: " << a.second << std::endl;
 		}
 	}
 }

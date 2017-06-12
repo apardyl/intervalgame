@@ -1,21 +1,22 @@
 // IntervalGame.cpp : Defines the entry point for the console application.
 //
 
+#include "IntervalGraph.h"
+#include "ThreadPool.h"
+#include "GraphMap.h"
+
 #include <algorithm>
 #include <float.h>
 #include <iostream>
 #include <mutex>
 #include <unordered_set>
 
-#include "IntervalGraph.h"
-#include "ThreadPool.h"
-#include "GraphMap.h"
-
 
 const unsigned TARGET_WIDTH = 0;
 const unsigned MAX_NESTED = 0;
 
 //#define DEBUG
+//#define MULTITHREADING_DEBUG
 
 unsigned depth = 0;
 
@@ -57,7 +58,7 @@ struct Results {
 	}
 
 	void set(const key_type &key, T val) {
-#ifdef DEBUG
+#ifdef MULTITHREADING_DEBUG
 		std::unique_lock<std::mutex> lock(mutex);
 		std::cerr << "Calculated " << key << ": " << val << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -66,13 +67,13 @@ struct Results {
 	}
 
 	void schedule(const key_type &key, const std::unordered_set<IntervalGraph> &tasks) {
-#ifdef DEBUG
+#ifdef MULTITHREADING_DEBUG
 		std::unique_lock<std::mutex> lock(mutex);
 		    std::cerr << "Scheduling for" << key << std::endl;
 #endif
 		for(auto task : tasks) {
 			if(resultMap.count(task) == 0) {
-#ifdef DEBUG
+#ifdef MULTITHREADING_DEBUG
 				std::cerr << "  Scheduling " << task << std::endl;
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 #endif
@@ -86,11 +87,27 @@ struct Results {
 
 void schedule(IntervalGraph);
 #ifdef DEBUG
-ThreadPool<void, IntervalGraph> tp(1)
+ThreadPool<void, IntervalGraph> tp(1);
 #else
 ThreadPool<void, IntervalGraph> tp;
 #endif
-Results<double> gameResults(tp, schedule);
+
+struct Outcome {
+	double score;
+	IntervalGraph winner;
+	Outcome(double score = -1, IntervalGraph winner = IntervalGraph())
+		: score(score), winner(winner) {
+	}
+	bool operator<(const Outcome& o) const {
+		return score < o.score || (score == o.score && winner < o.winner);
+	}
+	friend std::ostream& operator<<(std::ostream& os, const Outcome o) {
+		os << o.winner << o.score << std::endl;
+		return os;
+	}
+};
+
+Results<Outcome> gameResults(tp, schedule);
 
 double score(IntervalGraph cgraph) {
 	if(TARGET_WIDTH > 0) {
@@ -107,11 +124,11 @@ void schedule(IntervalGraph cgraph) {
 	unsigned colors = cgraph.colors();
 
 	if(cgraph.length() >= depth) {
-		gameResults.set(cgraph, score(cgraph));
+		gameResults.set(cgraph, Outcome(score(cgraph), cgraph));
 		return;
 	}
 
-	double max = -DBL_MAX;
+	Outcome max = Outcome(-DBL_MAX, IntervalGraph());
 
 	std::unordered_set<IntervalGraph> missing;
 	int missingCount = 0;
@@ -119,7 +136,7 @@ void schedule(IntervalGraph cgraph) {
 	unsigned cgraphLength = cgraph.length();
 	for(unsigned i = 0; i <= cgraphLength * 2; i++) {
 		for(unsigned k = 0; k <= cgraphLength * 2 - i; k++) {
-			double min = DBL_MAX;
+			Outcome min = Outcome(DBL_MAX, IntervalGraph());
 			for(unsigned j = 1; j <= colors + 1; j++) {
 				IntervalGraph ncgraph = cgraph;
 				if(!ncgraph.insert(i, k, j)) continue;
@@ -127,20 +144,21 @@ void schedule(IntervalGraph cgraph) {
 				if(!ncgraph.isValid(MAX_NESTED)) break;
 				ncgraph.normalize();
 
-				double x = DBL_MAX;
+				Outcome x = Outcome(DBL_MAX, IntervalGraph());
 				if(gameResults.count(ncgraph) == 1) x = gameResults[ncgraph];
 				else {
 					if(!gameResults.scheduledMap[ncgraph]) missing.emplace(ncgraph);
 					missingCount++;
 				}
 
+				
 				min = std::min(min, x);
 			}
-			if(min != DBL_MAX) max = std::max(max, min);
+			if(min.score != DBL_MAX) max = std::max(max, min);
 		}
 	}
 
-	max = std::max(max, score(cgraph));
+	max = std::max(max, Outcome(score(cgraph), cgraph));
 
 	if(missingCount == 0)
 		gameResults.set(cgraph, max);
@@ -150,7 +168,7 @@ void schedule(IntervalGraph cgraph) {
 	//std::cout << cgraph << max << std::endl;
 }
 
-double result(IntervalGraph cgraph) {
+Outcome result(IntervalGraph cgraph) {
 	//  std::cout << "Asking for " << cgraph << std::endl;
 	tp.push_back(schedule, cgraph);
 	while(true) {
@@ -166,8 +184,9 @@ int main() {
 		gameResults.clear();
 		depth = i;
 		IntervalGraph graph;
-		double x = result(graph);
-		std::cout << i << ": k: " << x << std::endl;
+		Outcome x = result(graph);
+		std::cout << i << ": k: " << x.score << std::endl;
+		std::cout << x.winner;
 		gameResults.resultMap.statistics();
 #ifdef DEBUG
 		gameResults.resultMap.printContent();
