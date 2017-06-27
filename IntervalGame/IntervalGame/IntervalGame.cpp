@@ -94,15 +94,35 @@ ThreadPool<void, IntervalGraph> tp;
 
 struct Outcome {
 	double score;
-	IntervalGraph winner;
-	Outcome(double score = -1, IntervalGraph winner = IntervalGraph())
-		: score(score), winner(winner) {
+	unsigned short bestNext;
+	Outcome(double score = -1, int start = 0, int length = 0, int color = 0)
+		: score(score), bestNext(start << 8 | length << 4 | color) {
 	}
 	bool operator<(const Outcome& o) const {
-		return score < o.score || (score == o.score && winner < o.winner);
+		return score < o.score || (score == o.score && bestNext < o.bestNext);
 	}
+	void setBest(int start, int length, int color) {
+		bestNext = start << 8 | length << 4 | color;
+	}
+
+	bool hasNext() const {
+		return bestNext != 0;
+	}
+
+	int getStart() const {
+		return (bestNext & (0xF << 8)) >> 8;
+	}
+
+	int getLength() const {
+		return (bestNext & (0xF << 4)) >> 4;
+	}
+
+	int getColor() const {
+		return bestNext & 0xF;
+	}
+
 	friend std::ostream& operator<<(std::ostream& os, const Outcome o) {
-		os << o.winner << o.score << std::endl;
+		os << o.score << std::endl;
 		return os;
 	}
 };
@@ -124,11 +144,11 @@ void schedule(IntervalGraph cgraph) {
 	unsigned colors = cgraph.colors();
 
 	if(cgraph.length() >= depth) {
-		gameResults.set(cgraph, Outcome(score(cgraph), cgraph));
+		gameResults.set(cgraph, Outcome(score(cgraph)));
 		return;
 	}
 
-	Outcome max = Outcome(-DBL_MAX, IntervalGraph());
+	Outcome max = Outcome(-DBL_MAX);
 
 	std::unordered_set<IntervalGraph> missing;
 	int missingCount = 0;
@@ -136,7 +156,7 @@ void schedule(IntervalGraph cgraph) {
 	unsigned cgraphLength = cgraph.length();
 	for(unsigned i = 0; i <= cgraphLength * 2; i++) {
 		for(unsigned k = 0; k <= cgraphLength * 2 - i; k++) {
-			Outcome min = Outcome(DBL_MAX, IntervalGraph());
+			Outcome min = Outcome(DBL_MAX);
 			for(unsigned j = 1; j <= colors + 1; j++) {
 				IntervalGraph ncgraph = cgraph;
 				if(!ncgraph.insert(i, k, j)) continue;
@@ -144,21 +164,21 @@ void schedule(IntervalGraph cgraph) {
 				if(!ncgraph.isValid(MAX_NESTED)) break;
 				ncgraph.normalize();
 
-				Outcome x = Outcome(DBL_MAX, IntervalGraph());
+				Outcome x = Outcome(DBL_MAX);
 				if(gameResults.count(ncgraph) == 1) x = gameResults[ncgraph];
 				else {
 					if(!gameResults.scheduledMap[ncgraph]) missing.emplace(ncgraph);
 					missingCount++;
 				}
 
-				
+				x.setBest(i, k, j);
 				min = std::min(min, x);
 			}
 			if(min.score != DBL_MAX) max = std::max(max, min);
 		}
 	}
 
-	max = std::max(max, Outcome(score(cgraph), cgraph));
+	max = std::max(max, Outcome(score(cgraph)));
 
 	if(missingCount == 0)
 		gameResults.set(cgraph, max);
@@ -178,15 +198,40 @@ Outcome result(IntervalGraph cgraph) {
 	}
 }
 
-int main() {
+IntervalGraph nextInPath(const IntervalGraph& a, const Outcome& o) { //Should be an iterator
+	IntervalGraph b = a;
+	b.insert(o.getStart(), o.getLength(), o.getColor());
+	b.normalize();
+	return b;
+}
 
+void printWinner(IntervalGraph a) {
+	while(true) {
+		Outcome o = gameResults.resultMap[a];
+		if(o.hasNext()) a = nextInPath(a, o);
+		else break;
+	}
+	std::cout << a;
+}
+
+void printPath(IntervalGraph a) {
+	while(true) {
+		std::cout << a;
+		Outcome o = gameResults.resultMap[a];
+		if(o.hasNext()) a = nextInPath(a, o);
+		else break;
+	}
+}
+
+int main() {
 	for(int i = 1; i <= 16; i++) {
 		gameResults.clear();
 		depth = i;
 		IntervalGraph graph;
 		Outcome x = result(graph);
 		std::cout << i << ": k: " << x.score << std::endl;
-		std::cout << x.winner;
+		printWinner(graph);
+		std::cin.get();
 		gameResults.resultMap.statistics();
 #ifdef DEBUG
 		gameResults.resultMap.printContent();
