@@ -1,6 +1,7 @@
 #pragma once
 #include "Array4Bit.h"
 #include <ostream>
+#include <istream>
 
 class IntervalGraph {
 private:
@@ -19,6 +20,7 @@ public:
 	bool operator<(const IntervalGraph& a) const;
 
 	friend std::ostream& operator<<(std::ostream &, const IntervalGraph &);
+	friend std::istream& operator>>(std::istream &, IntervalGraph &);
 	friend std::hash<IntervalGraph>;
 };
 

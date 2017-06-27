@@ -1,4 +1,3 @@
-
 #include "Array4Bit.h"
 #include <stdexcept>
 
@@ -7,6 +6,11 @@ int Array4Bit::length() const {
 		if((*this)[i] != 0) return i + 1;
 	}
 	return 0;
+}
+
+void Array4Bit::clear() {
+	val[0] = 0;
+	val[1] = 0;
 }
 
 size_t std::hash<Array4Bit>::operator()(const Array4Bit &a) const {
@@ -79,5 +83,5 @@ Array4Bit::ConstProxy::operator unsigned() const {
 }
 
 Array4Bit::Array4Bit()
-	: val{ 0 } {
+	: val{0} {
 }

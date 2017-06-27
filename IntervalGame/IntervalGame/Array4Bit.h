@@ -40,6 +40,7 @@ public:
 	void insert(int at, int v);
 
 	int length() const;
+	void clear();
 
 	friend std::hash<Array4Bit>;
 };

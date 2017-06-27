@@ -14,6 +14,8 @@
 
 const unsigned TARGET_WIDTH = 0;
 const unsigned MAX_NESTED = 0;
+const bool SHOW_FULL_PATH = false;
+const bool INTERACTIVE = false;
 
 //#define DEBUG
 //#define MULTITHREADING_DEBUG
@@ -41,7 +43,7 @@ struct Results {
 	void clear() {
 		std::unique_lock<std::mutex> lock(mutex);
 		tp.clear();
-		resultMap.clear(); 
+		resultMap.clear();
 		scheduledMap.clear();
 	}
 
@@ -95,12 +97,15 @@ ThreadPool<void, IntervalGraph> tp;
 struct Outcome {
 	double score;
 	unsigned short bestNext;
+
 	Outcome(double score = -1, int start = 0, int length = 0, int color = 0)
 		: score(score), bestNext(start << 8 | length << 4 | color) {
 	}
-	bool operator<(const Outcome& o) const {
+
+	bool operator<(const Outcome &o) const {
 		return score < o.score || (score == o.score && bestNext < o.bestNext);
 	}
+
 	void setBest(int start, int length, int color) {
 		bestNext = start << 8 | length << 4 | color;
 	}
@@ -121,7 +126,7 @@ struct Outcome {
 		return bestNext & 0xF;
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const Outcome o) {
+	friend std::ostream& operator<<(std::ostream &os, const Outcome o) {
 		os << o.score << std::endl;
 		return os;
 	}
@@ -198,7 +203,7 @@ Outcome result(IntervalGraph cgraph) {
 	}
 }
 
-IntervalGraph nextInPath(const IntervalGraph& a, const Outcome& o) { //Should be an iterator
+IntervalGraph nextInPath(const IntervalGraph &a, const Outcome &o) { //Should be an iterator
 	IntervalGraph b = a;
 	b.insert(o.getStart(), o.getLength(), o.getColor());
 	b.normalize();
@@ -223,6 +228,24 @@ void printPath(IntervalGraph a) {
 	}
 }
 
+void graphUI() {
+	while(true) {
+		IntervalGraph graph;
+		try {
+			std::cin >> graph;
+		} catch(std::logic_error) {
+			break;
+		}
+		if(!graph.isValid(MAX_NESTED)) {
+			std::cout << "Invalid graph" << std::endl;
+			continue;
+		}
+		graph.normalize();
+		if(SHOW_FULL_PATH) printPath(graph);
+		else printWinner(graph);
+	}
+}
+
 int main() {
 	for(int i = 1; i <= 16; i++) {
 		gameResults.clear();
@@ -230,9 +253,13 @@ int main() {
 		IntervalGraph graph;
 		Outcome x = result(graph);
 		std::cout << i << ": k: " << x.score << std::endl;
-		printWinner(graph);
-		std::cin.get();
+
+		if(SHOW_FULL_PATH) printPath(graph);
+		else printWinner(graph);
 		gameResults.resultMap.statistics();
+		if(INTERACTIVE) {
+			graphUI();
+		}
 #ifdef DEBUG
 		gameResults.resultMap.printContent();
 		std::cin.get();

@@ -2,6 +2,8 @@
 #include <set>
 #include <utility>
 #include <stdexcept>
+#include <string>
+#include <cctype>
 
 int IntervalGraph::normailzeColors() {
 	unsigned perm[16] = {0};
@@ -36,8 +38,7 @@ bool IntervalGraph::isValid(int maxNested) const {
 	for(int i = 0; i < 32 && graph[i] != 0; i++) {
 		if(interr[graph[i]] == -1) {
 			interr[graph[i]] = i;
-		}
-		else {
+		} else {
 			intervals.emplace(interr[graph[i]], i);
 			interr[graph[i]] = -1;
 		}
@@ -80,8 +81,8 @@ void IntervalGraph::normalize() {
 
 bool IntervalGraph::insert(unsigned start, unsigned length, unsigned color) {
 	unsigned l = this->length();
-	if(start > l*2) throw std::out_of_range("start index too far");
-	if(start + length > l*2) throw std::out_of_range("inteval too long");
+	if(start > l * 2) throw std::out_of_range("start index too far");
+	if(start + length > l * 2) throw std::out_of_range("inteval too long");
 
 	graph.insert(start, 15);
 	graph.insert(start + length + 1, 15);
@@ -164,4 +165,16 @@ std::ostream& operator<<(std::ostream &os, const IntervalGraph &igraph) {
 	}
 
 	return os;
+}
+
+std::istream& operator>>(std::istream &in, IntervalGraph &g) {
+	int i = 0;
+	g.graph.clear();
+	std::string s;
+	in >> s;
+	for(char c : s) {
+		if(!std::isxdigit(c)) throw std::logic_error("Illegal color in graph");
+		g.graph[i++] = (c >= 'A') ? (c - 'A' + 10) : (c - '0');
+	}
+	return in;
 }
